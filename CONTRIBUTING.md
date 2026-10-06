@@ -72,3 +72,7 @@ section stays a placeholder._
   **fails closed** (a check that never reports would dead-end every feature merge).
 - **Orchestrator ruleset bypass on `main`:** **none** — the orchestrator is never granted a bypass;
   required checks gate its merges exactly as they gate a human's.
+- **Required approving reviews on `main`:** **0** — a deliberate choice for a solo POC with one
+  maintainer, since GitHub does not let a PR's author approve their own PR. Every other `main`
+  protection stays in force: PR-only, squash-merge only, no force-push, no deletion. Raise this to
+  **1** as soon as a second person with write access joins the project.
