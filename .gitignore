@@ -24,5 +24,17 @@ diff_output.txt
 scratch.txt
 dump.txt
 
-# Stack-specific ignores (Python/.NET/Node/etc.) are added once the stack is
-# chosen -- see /factory-init-tech-context.
+# Stack: Next.js + TypeScript (Technical-Context.MD)
+node_modules/
+.next/
+out/
+build/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+npm-debug.log*
+playwright-report/
+test-results/
+
+# Secrets -- the CricAPI key never enters git
+.env*
