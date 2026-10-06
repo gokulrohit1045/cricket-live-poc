@@ -1,3 +1,5 @@
 ado:
   org: "EnateInternal"
   project: "Cricket Live POC"
+adr:
+  prefix: CLP
