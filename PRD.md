@@ -2,7 +2,7 @@
 
 ## Problem Statement
 
-A cricket follower who wants to know what is happening in men's international cricket right now has to dig through general sports sites, which mix international cricket with domestic leagues, franchise tournaments, women's, A and age-group cricket, and news. Seeing at a glance which International Matches between the major national teams are live, and the Score of each, takes several clicks and a lot of noise. Those sites also rarely say how old a Score is, so a viewer cannot tell a current Score from a Stale Score.
+A cricket follower who wants to know what is happening in men's international cricket right now has to dig through general sports sites, which mix international cricket with domestic leagues, franchise tournaments, women's, A and age-group cricket, and news. Seeing at a glance which International Matches between the major Full-Member Teams are live, and the Score of each, takes several clicks and a lot of noise. Those sites also rarely say how old a Score is, so a viewer cannot tell a current Score from a Stale Score.
 
 ## Solution
 
@@ -18,7 +18,7 @@ A single web page that lists every Live Match between two Full-Member Teams, in 
 4. As a cricket follower, I want a Live Match to stay on the page through every break in play (drinks, lunch, tea, rain or bad-light delays, the interval between innings, and overnight in a Test), so that a pause in play does not make a match disappear.
 5. As a cricket follower, I want each match's two teams named clearly, so that I can find the match I care about quickly.
 6. As a cricket follower, I want each match labelled with its Format, so that I know whether a Score is from a Test, an ODI or a T20I.
-7. As a cricket follower, I want a plain "No live matches right now" message when nothing is live, so that an empty page does not look broken.
+7. As a cricket follower, I want a plain `No live matches right now` message when nothing is live, so that an empty page does not look broken.
 8. As a cricket follower, I want Fixtures that have not reached the toss kept off the page, so that the page shows only what is happening now.
 9. As a cricket follower watching several matches, I want Live Matches in a stable, predictable order, so that a match does not jump around the list each time the page refreshes.
 
@@ -73,13 +73,13 @@ A single web page that lists every Live Match between two Full-Member Teams, in 
 - **Our server decides whether a match is an International Match and what its state is**, using the Context.MD definitions: men's Test, ODI or T20I between two Full-Member Teams; Live Match from toss to Result; Recently Completed Match during the post-Result window. The browser gets only what it shows.
 - **The 12 Full-Member Teams are a fixed list owned by the product.** CricAPI's own team categorisation is not used. Changing the list (if the ICC admits or removes a Full Member) is a deliberate change.
 - **Every response from the Score Feed is checked before use.** A response that is malformed or missing required fields is treated as a Feed Delay, never shown (requirement 35, the fail-closed principle).
-- **Freshness is judged against Last Updated.** A Score past the staleness threshold is a Stale Score and is never presented as live; failing to reach the Score Feed, or getting no fresh data from it, is a Feed Delay.
+- **Freshness is judged against Last Updated.** A Score past the staleness threshold is a Stale Score and is never presented as live; failing to reach the Score Feed, or getting no fresh data from it, is a Feed Delay. A spent daily request quota is not a Feed Delay: it has its own plain banner, daily score limit reached.
 - **No database and no user accounts.** The page holds no state beyond the latest shared Score Feed result.
 - **Logging is structured JSON to stdout.** Every Score Feed call is logged with its status, latency and remaining quota where reported, and so is every Feed Delay, as `Technical-Context.MD` requires.
 
 ## Testing Decisions
 
-- **A good test checks what a viewer can see, not how the code does it.** Tests assert on the rendered page: which matches are listed, the Score text, the Last Updated time, the Result, and the banners. They never assert on internal functions or data shapes.
+- **A good test checks what a viewer can see, not how the code does it.** Tests assert on the rendered page: which matches are listed, the Score text, the Last Updated time, the Result, and the banners. They never assert on internal functions or data shapes, with one exception: the app's own `/api/live` route is the contract the page polls, so tests may assert on its response body.
 - **Only the Live page is tested, end to end, with Playwright.** No module is unit-tested in isolation. Each test runs the whole app, from the page through our server to the Score Feed boundary.
 - **The Score Feed is faked at its boundary with recorded CricAPI responses (MSW).** This is the Tier-1 recorded replay in `Technical-Context.MD`'s testing standard, and it gives the CricAPI seam a test with real IO on our side.
 - **Scenarios the recorded responses must cover:**
@@ -110,6 +110,6 @@ A single web page that lists every Live Match between two Full-Member Teams, in 
 
 ## Further Notes
 
-- **Open values to fix before the first Feature is specified:** the refresh interval, the Stale Score threshold, and how long a Recently Completed Match stays visible. The first two depend on the CricAPI plan's request quota.
-- **To verify before the first Feature:** CricAPI's free-tier request quota and its terms of use for this product. Both were assumed, not checked, when CricAPI was chosen (ADR CLP-0001).
+- **Open values, each fixed by the Feature that needs it:** the refresh interval is 120 seconds, set by the live-scores Feature; the Stale Score threshold is set by the Stale Score Feature, and how long a Recently Completed Match stays visible by the Recently Completed Feature. The threshold depends on the CricAPI plan's request quota.
+- **To verify before the first deploy to `poc`:** CricAPI's terms of use for this product. The free-tier request quota is confirmed: 100 hits a day on the Lifetime Free plan, read from the cricketdata.org pricing page on 2026-10-12 (ADR CLP-0001).
 - A Scorecard view is the most likely next Feature after the POC. The glossary already defines Scorecard.

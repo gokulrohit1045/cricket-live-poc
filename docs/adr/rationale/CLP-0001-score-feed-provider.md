@@ -22,4 +22,4 @@ None.
 - 2026-10-06 — created during the `/factory-grill-with-docs` session that followed the project bootstrap.
 
 ## Open checks
-- CricAPI's free-tier request quota, and whether its terms permit this use, were not verified when the decision was made. Confirm both before the first Feature that calls the Score Feed is specified.
+- Whether CricAPI's terms permit this use was not verified when the decision was made. Confirm it before the first deploy to `poc`. The free-tier request quota is confirmed: 100 hits a day on the Lifetime Free plan, read from the cricketdata.org pricing page on 2026-10-12.

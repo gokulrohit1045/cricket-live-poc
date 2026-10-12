@@ -28,7 +28,7 @@ An **International Match** whose toss has not yet happened.
 _Avoid_: upcoming game, schedule entry
 
 **Live Match**:
-An **International Match** between the toss and its **Result**, including every break in play — drinks, lunch, tea, rain or bad-light delays, the interval between innings, and overnight between the days of a Test.
+An **International Match** between the toss and its **Result**, including every break in play: drinks, lunch, tea, rain or bad-light delays, the interval between innings, and overnight between the days of a Test.
 _Avoid_: ongoing match, in-progress game
 
 **Completed Match**:
@@ -44,7 +44,7 @@ The kind of **International Match**: Test (up to five days, two **Innings** per 
 _Avoid_: match type, version
 
 **Result**:
-How a **Match** ended — a win (with its margin in runs or wickets), a tie, a draw (Tests only), no result, or abandoned.
+How a **Match** ended: a win (with its margin in runs or wickets), a tie, a draw (Tests only), no result, or abandoned.
 _Avoid_: outcome, final score
 
 ### Scoring
@@ -53,15 +53,15 @@ _Avoid_: outcome, final score
 One team's turn to bat in a **Match**.
 
 **Score**:
-The one-line summary of a **Match**'s current state — every **Innings** total so far, runs/wickets and overs in the current **Innings**, and the **Target**, lead or deficit where one applies; a Test's **Score** also gives the day (e.g. `IND 245/6 (42.3 ov) — target 290`, `ENG 325 & 140/3 (45 ov) v IND 280 — ENG lead by 185 · Day 3`).
+The one-line summary of a **Match**'s current state: every **Innings** total so far, runs/wickets and overs in the current **Innings**, and the **Target**, lead or deficit where one applies; a Test's **Score** also gives the day (e.g. `IND 245/6 (42.3 ov) — target 290`, `ENG 325 & 140/3 (45 ov) v IND 280 — ENG lead by 185 · Day 3`).
 _Avoid_: scoreline, live score (as a separate term)
 
 **Target**:
-The runs the side batting second must reach to win an ODI or T20I — always the current figure, including any revision under the DLS method, which the **Score** marks (e.g. `target 245 (DLS, 40 ov)`).
+The runs the side batting second must reach to win an ODI or T20I, always the current figure, including any revision under the DLS method, which the **Score** marks (e.g. `target 245 (DLS, 40 ov)`).
 _Avoid_: revised target (as a separate term), chase total
 
 **Scorecard**:
-The full detail of each **Innings** of a **Match** — each batter's runs and dismissal, each bowler's figures, extras and the fall of wickets.
+The full detail of each **Innings** of a **Match**: each batter's runs and dismissal, each bowler's figures, extras and the fall of wickets.
 _Avoid_: full score, match details
 
 ### Data freshness
@@ -94,12 +94,12 @@ _Avoid_: outage, lag
 ## Example dialogue
 
 > **Dev:** "Rain stopped play in the India–England Test an hour ago. Is that still a **Live Match**?"
-> **Domain expert:** "Yes — a **Live Match** runs from the toss to the **Result**, breaks and all. If the **Score Feed** hasn't sent anything for longer than expected, that's a **Feed Delay**, and we show it rather than a **Stale Score**."
-> **Dev:** "And Ireland against Scotland tomorrow — is that a **Fixture**?"
+> **Domain expert:** "Yes. A **Live Match** runs from the toss to the **Result**, breaks and all. If the **Score Feed** hasn't sent anything for longer than expected, that's a **Feed Delay**, and we show it rather than a **Stale Score**."
+> **Dev:** "And Ireland against Scotland tomorrow, is that a **Fixture**?"
 > **Domain expert:** "No. Scotland isn't a **Full-Member Team**, so it isn't an **International Match** in this product at all."
 
 ## Flagged ambiguities
 
-- "International league" was used for the product's scope — resolved: there is no league; the scope is **International Matches** between **Full-Member Teams**.
-- "Big national team" — resolved: means a **Full-Member Team**, all 12 of them, with no shortlist.
-- "Live score" was used for both the one-line summary and the full detail — resolved: the summary is the **Score**, the detail is the **Scorecard**.
+- "International league" was used for the product's scope; resolved: there is no league; the scope is **International Matches** between **Full-Member Teams**.
+- "Big national team"; resolved: means a **Full-Member Team**, all 12 of them, with no shortlist.
+- "Live score" was used for both the one-line summary and the full detail; resolved: the summary is the **Score**, the detail is the **Scorecard**.

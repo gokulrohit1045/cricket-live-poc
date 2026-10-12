@@ -22,7 +22,7 @@ Every later section of this contract is written for the Operating Context stated
 - **Node.js (Active LTS at scaffold time)** — runtime for Next.js locally, in CI and on Azure App Service; exact version pinned in `.nvmrc`.
 
 ## 3rd-party tech
-- **CricketData.org (CricAPI)** — the licensed source of fixtures and live scores for international matches between full-member national teams. Called only from Next.js server code; the API key is held server-side as an App Service application setting and never reaches the browser.
+- **CricketData.org (CricAPI)** — the licensed source of fixtures and live scores for International Matches between Full-Member Teams. Called only from Next.js server code; the API key is held server-side as an App Service application setting and never reaches the browser.
 - **Azure App Service** — hosts the Next.js app.
 - **Azure DevOps** — work tracking (`EnateInternal` / `Cricket Live POC`) and the CI pipeline that reports the `ci` status check on pull requests.
 - **GitHub** — source hosting (`gokulrohit1045/cricket-live-poc`).
@@ -39,7 +39,7 @@ No other libraries are approved. Use what Next.js, React and the Node standard l
 
 ## Instrumentation
 - Structured JSON logs, one object per line, written to stdout with no logging library; read through the Azure App Service log stream.
-- Levels: `error` — a request failed or the feed is unusable; `warn` — degraded (feed slow, stale, or quota nearly spent); `info` — normal lifecycle events; `debug` — off in the `poc` environment.
+- Levels: `error` — a request failed or the feed is unusable; `warn` — degraded (feed slow, stale, quota nearly spent, or the day's quota spent while the daily-limit banner shows); `info` — normal lifecycle events; `debug` — off in the `poc` environment.
 - Always logged: every CricAPI call (endpoint, HTTP status, latency, remaining quota if the response reports it) and every feed failure or stale-data condition.
 - Never logged: the CricAPI key or any request header carrying it.
 - No APM or tracing service is in use; adding one is an ADR.
@@ -47,8 +47,8 @@ No other libraries are approved. Use what Next.js, React and the Node standard l
 ## User Feedback Approach
 - Channel: in-app only. No user accounts, no email, no push notifications.
 - Tone: terse and factual — scoreboard style, no exclamation marks or chatter.
-- Every score shows when it was last updated.
-- Degraded states use a plain banner: feed delayed, feed unavailable, no live matches right now.
+- Every score shows its Last Updated time.
+- Degraded states use a plain banner: feed delayed, feed unavailable, daily score limit reached, `No live matches right now`.
 
 ## Branching and Environments
 - Model: trunk-based; full rules in `CONTRIBUTING.md`.
@@ -74,4 +74,4 @@ No other libraries are approved. Use what Next.js, React and the Node standard l
 - **Disposable substrate, not shared.** Tier-2 substrate is created per run and torn down; reproducibility comes from a seed (tarball/manifest/script), never persistent state.
 - **Assert on observable behaviour, not internal state.** For Tier 2/3 the target is what an operator could verify from external artefacts — tracker state, commit shape, ordered log events, posted comments.
 
-**In this project:** Tier 1 replays recorded CricAPI responses through `msw`; Tier 2 calls the live CricAPI on a schedule, kept within the plan's request quota; Tier 3 is the `poc` environment.
+**In this project:** Tier 1 replays recorded CricAPI responses through `msw`, and may assert on the body of the app's own `/api/live` route, the contract the page polls; Tier 2 calls the live CricAPI on a schedule, kept within the plan's request quota; Tier 3 is the `poc` environment.
