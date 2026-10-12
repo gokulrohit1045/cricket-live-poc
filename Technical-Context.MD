@@ -6,9 +6,9 @@ Engineering-practice contract for code-writing agents in this project. Every imp
 
 Every later section of this contract is written for the Operating Context stated here.
 
-- **Users:** Cricket followers, on desktop or phone, who check the live Score of men's International Matches between Full-Member Teams at a glance; the product owner also uses it to test and judge the POC. Viewers are anonymous: there are no accounts.
+- **Users:** Enate colleagues who follow cricket, on desktop or phone, who check the live Score of men's International Matches between Full-Member Teams at a glance; the product owner also uses it to test and judge the POC. The app itself has no accounts; viewers reach the `poc` environment only through Enate sign-in.
 - **Operating Scale:** A proof of concept with a handful of viewers at a time, mostly the product owner testing by hand (about 20 page loads a day). The binding limit is the CricAPI Lifetime Free plan, 100 Score Feed hits a day; the product stays on the free plan, and no paid subscription will be bought. The team is one person, delivering one Feature at a time through the Factory.
-- **Where it runs:** A single Azure App Service instance on Linux (the `poc` environment), running Node.js (Active LTS), deployed from `main` after `ci` passes. Viewers use any current desktop or mobile browser. Developers work in local and cloud Claude Code sessions; anything that calls CricAPI with the real key, such as Captures and Tier-2 checks, runs in a local session or in a cloud session whose environment holds `CRICAPI_KEY`.
+- **Where it runs:** A single Azure App Service instance on Linux (the `poc` environment), running Node.js (Active LTS), deployed from `main` after `ci` passes. The `poc` environment is internal to Enate and never public, because CricAPI's free terms allow personal and non-commercial use only; access to it is restricted to Enate accounts. Viewers use any current desktop or mobile browser. Developers work in local and cloud Claude Code sessions; anything that calls CricAPI with the real key, such as Captures and Tier-2 checks, runs in a local session or in a cloud session whose environment holds `CRICAPI_KEY`.
 - **Credentials:** The one secret is the CricAPI key, owned by the product owner: the App Service application setting `CRICAPI_KEY` in `poc`, a gitignored `.env.local` or an environment variable locally, and the `CRICAPI_KEY` environment variable of the cloud environment developers' cloud sessions run in. It never enters git, a log line or the browser. Developers sign in to Azure, Azure DevOps and GitHub with their own accounts; viewers need none. The CI pipeline's deploy credential to Azure is not set up yet.
 - **Alongside it:** The CricAPI service (the Score Feed), called over HTTPS; the Azure DevOps pipeline that reports the `ci` check on pull requests; and the Azure App Service log stream, where the app's JSON logs are read. Nothing else shares the App Service, and there is no database, cache or queue.
 - **Not the Product's concern:** Whether CricAPI's data is accurate, how often it updates and whether it stays up, which CricketData.org owns; the Azure subscription and the App Service platform beneath the app; and viewers' browsers, devices and networks.
@@ -22,7 +22,7 @@ Every later section of this contract is written for the Operating Context stated
 - **Node.js (Active LTS at scaffold time)** — runtime for Next.js locally, in CI and on Azure App Service; exact version pinned in `.nvmrc`.
 
 ## 3rd-party tech
-- **CricketData.org (CricAPI)** — the licensed source of fixtures and live scores for international matches between full-member national teams. Called only from Next.js server code; the API key is held server-side as an App Service application setting and never reaches the browser.
+- **CricketData.org (CricAPI)** — the licensed source of fixtures and live scores for International Matches between Full-Member Teams. Called only from Next.js server code; the API key is held server-side as an App Service application setting and never reaches the browser.
 - **Azure App Service** — hosts the Next.js app.
 - **Azure DevOps** — work tracking (`EnateInternal` / `Cricket Live POC`) and the CI pipeline that reports the `ci` status check on pull requests.
 - **GitHub** — source hosting (`gokulrohit1045/cricket-live-poc`).
@@ -39,7 +39,7 @@ No other libraries are approved. Use what Next.js, React and the Node standard l
 
 ## Instrumentation
 - Structured JSON logs, one object per line, written to stdout with no logging library; read through the Azure App Service log stream.
-- Levels: `error` — a request failed or the feed is unusable; `warn` — degraded (feed slow, stale, or quota nearly spent); `info` — normal lifecycle events; `debug` — off in the `poc` environment.
+- Levels: `error` — a request failed or the feed is unusable; `warn` — degraded (feed slow, stale, quota nearly spent, or the day's quota spent while the daily-limit banner shows); `info` — normal lifecycle events; `debug` — off in the `poc` environment.
 - Always logged: every CricAPI call (endpoint, HTTP status, latency, remaining quota if the response reports it) and every feed failure or stale-data condition.
 - Never logged: the CricAPI key or any request header carrying it.
 - No APM or tracing service is in use; adding one is an ADR.
@@ -47,8 +47,8 @@ No other libraries are approved. Use what Next.js, React and the Node standard l
 ## User Feedback Approach
 - Channel: in-app only. No user accounts, no email, no push notifications.
 - Tone: terse and factual — scoreboard style, no exclamation marks or chatter.
-- Every score shows when it was last updated.
-- Degraded states use a plain banner: feed delayed, feed unavailable, no live matches right now.
+- Every score shows its Last Updated time.
+- Degraded states use a plain banner: feed delayed, feed unavailable, daily score limit reached, `No live matches right now`.
 
 ## Branching and Environments
 - Model: trunk-based; full rules in `CONTRIBUTING.md`.
@@ -74,4 +74,4 @@ No other libraries are approved. Use what Next.js, React and the Node standard l
 - **Disposable substrate, not shared.** Tier-2 substrate is created per run and torn down; reproducibility comes from a seed (tarball/manifest/script), never persistent state.
 - **Assert on observable behaviour, not internal state.** For Tier 2/3 the target is what an operator could verify from external artefacts — tracker state, commit shape, ordered log events, posted comments.
 
-**In this project:** Tier 1 replays recorded CricAPI responses through `msw`; Tier 2 calls the live CricAPI on a schedule, kept within the plan's request quota; Tier 3 is the `poc` environment.
+**In this project:** Tier 1 replays recorded CricAPI responses through `msw`, and may assert on the body of the app's own `/api/live` route, the contract the page polls; Tier 2 calls the live CricAPI on a schedule, kept within the plan's request quota; Tier 3 is the `poc` environment.

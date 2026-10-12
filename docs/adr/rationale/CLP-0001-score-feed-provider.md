@@ -22,4 +22,4 @@ None.
 - 2026-10-06 — created during the `/factory-grill-with-docs` session that followed the project bootstrap.
 
 ## Open checks
-- CricAPI's free-tier request quota, and whether its terms permit this use, were not verified when the decision was made. Confirm both before the first Feature that calls the Score Feed is specified.
+- Both checks are closed. The free-tier request quota is 100 hits a day on the Lifetime Free plan, read from the cricketdata.org pricing page on 2026-10-12. The terms of use (cricketdata.org/terms-of-use, read on 2026-10-12) grant free use "only for your personal and non-commercial use" and require purchased credits for commercial use; the product owner confirmed on 2026-10-12 that the POC is internal to Enate, earns nothing and is never public, which keeps it within that grant. Making the product public or commercial reopens this check.
