@@ -111,5 +111,5 @@ A single web page that lists every Live Match between two Full-Member Teams, in 
 ## Further Notes
 
 - **Open values, each fixed by the Feature that needs it:** the refresh interval is 120 seconds, set by the live-scores Feature; the Stale Score threshold is set by the Stale Score Feature, and how long a Recently Completed Match stays visible by the Recently Completed Feature. The threshold depends on the CricAPI plan's request quota.
-- **To verify before the first deploy to `poc`:** CricAPI's terms of use for this product. The free-tier request quota is confirmed: 100 hits a day on the Lifetime Free plan, read from the cricketdata.org pricing page on 2026-10-12 (ADR CLP-0001).
+- **CricAPI's quota and terms are confirmed (ADR CLP-0001):** 100 hits a day on the Lifetime Free plan, whose terms allow personal and non-commercial use only. The POC therefore stays internal to Enate, earns nothing and is never public; making it public or commercial needs a paid CricAPI plan first.
 - A Scorecard view is the most likely next Feature after the POC. The glossary already defines Scorecard.
